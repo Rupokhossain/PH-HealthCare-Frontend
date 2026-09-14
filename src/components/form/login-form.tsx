@@ -2,21 +2,30 @@
 
 import { useForm } from "@tanstack/react-form";
 import { Input } from "../ui/input";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "../ui/field";
 import { Button } from "../ui/button";
 import { loginSchema } from "@/validation";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useLogin } from "@/hooks/auth.hook";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
+import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
+import { useGoogleOAuth, useLogin } from "@/hooks/auth.hook";
+import Link from "next/link";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const { mutate: login, isPending: loginPending } = useLogin();
+  const { mutate: googleLogin } = useGoogleOAuth();
 
   const form = useForm({
     defaultValues: {
@@ -34,16 +43,17 @@ const LoginForm = () => {
           toast.add({
             title: "Login Success",
             description: "Welcome Back",
-            type: "Success"
+            type: "Success",
           });
           router.push("/");
         },
         onError: (err) => {
           toast.add({
             title: "Authorization failure",
-            description: err.message || "Something went wrong. Please try again",
-            type: "error"
-          })
+            description:
+              err.message || "Something went wrong. Please try again",
+            type: "error",
+          });
         },
       });
     },
@@ -130,18 +140,32 @@ const LoginForm = () => {
               );
             }}
           </form.Field>
-        </FieldGroup>
 
-        <Button disabled={loginPending} type="submit">
-          {loginPending ? (
-            <>
-              <Spinner/> Submitting
-            </>
-          ) : (
+          <Button disabled={loginPending} type="submit">
+            {loginPending ? (
+              <>
+                <Spinner /> Submitting
+              </>
+            ) : (
               "Submit"
-          )}
-        </Button>
+            )}
+          </Button>
+        </FieldGroup>
       </form>
+
+      <FieldSeparator>Or</FieldSeparator>
+
+      <GoogleLoginComponent />
+
+      <div className="text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/register"
+          className="font-medium underline underline-offset-4 hover:text-primary"
+        >
+          Register
+        </Link>
+      </div>
     </div>
   );
 };

@@ -35,12 +35,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         inter.variable,
       )}
     >
-      <Providers>
-        <body className="min-h-full flex flex-col">
-          <Toaster/>
+      <body className="min-h-full flex flex-col">
+        <Providers>
+          <Toaster />
           {children}
-          </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }

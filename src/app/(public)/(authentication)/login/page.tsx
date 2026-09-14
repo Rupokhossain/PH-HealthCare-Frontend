@@ -1,6 +1,7 @@
-import LoginForm from "@/components/form/login-form";
 import { GalleryVerticalEnd } from "lucide-react";
 import Image from "next/image";
+import LoginForm from "@/components/form/login-form";
+
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -15,7 +16,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            <LoginForm/>
           </div>
         </div>
       </div>
