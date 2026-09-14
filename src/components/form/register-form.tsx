@@ -1,7 +1,13 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "../ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "../ui/field";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import z from "zod";
@@ -13,9 +19,9 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
+import { Spinner } from "../ui/spinner";
 
 const RegisterForm = () => {
-
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -30,7 +36,8 @@ const RegisterForm = () => {
     confirmPassword: "@User123456",
   };
 
-  const { mutate: registration } = useRegistration();
+  const { mutate: registration, isPending: registrationPending } =
+    useRegistration();
 
   const form = useForm({
     defaultValues,
@@ -62,8 +69,8 @@ const RegisterForm = () => {
             description: "Please verify your account",
             type: "success",
           });
-          // const params = new URLSearchParams({ email: registrationData.email });
-          // router.push(`/register/verify-account?${params.toString()}`);
+          const params = new URLSearchParams({ email: registrationData.email });
+          router.push(`/register/verify-account?${params.toString()}`);
         },
         onError: (err) => {
           toast.add({
@@ -77,9 +84,8 @@ const RegisterForm = () => {
     },
   });
 
-
   return (
-        <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
         <p className="text-sm text-muted-foreground">
@@ -258,7 +264,15 @@ const RegisterForm = () => {
             }}
           </form.Field>
 
-          <Button type="submit">Submit</Button>
+          <Button disabled={registrationPending} type="submit">
+            {registrationPending ? (
+              <>
+                <Spinner /> Submitting
+              </>
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </FieldGroup>
       </form>
 
@@ -276,7 +290,7 @@ const RegisterForm = () => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RegisterForm
+export default RegisterForm;
