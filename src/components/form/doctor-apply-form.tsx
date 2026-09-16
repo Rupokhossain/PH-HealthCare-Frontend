@@ -16,11 +16,11 @@ import {
   BriefcaseMedical,
   FileUp,
   GraduationCap,
-  Link,
+
   Mail,
   MapPin,
   Phone,
-  Plus,
+
   Stethoscope,
   User,
   X,
@@ -32,9 +32,10 @@ import {
   isAcceptedFileSize,
   isAcceptedFileType,
   MAX_FILE_SIZE,
-  MAX_FILE_SIZE_BYTES,
+
 } from "@/validation";
 import { formatFileSize } from "@/utils";
+import { DoctorApplicationData } from "@/types/doctor.type";
 
 const DoctorApplyForm = () => {
   const router = useRouter();
@@ -42,22 +43,53 @@ const DoctorApplyForm = () => {
 
   const form = useForm({
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      specialization: "",
-      licenseNumber: "",
-      qualifications: "",
-      experienceYears: "",
-      consultationFee: "",
-      bio: "",
+      name: "siam ahmed",
+      email: "siam@gmail.com",
+      phone: "01912345678",
+      address: "Neptune",
+      specialization: "Cardiologist",
+      licenseNumber: "ABC123",
+      qualifications: "MBBS",
+      experienceYears: "50",
+      consultationFee: "10000",
+      bio: "My life, my rules.",
       resume: null as File | null,
       additionalFiles: [] as File[],
     },
 
     onSubmit: async ({ value }) => {
-      console.log(value);
+     const doctorData: DoctorApplicationData = {
+        user: {
+          name: value.name.trim(),
+          email: value.email.trim(),
+        },
+        doctor: {
+          specialization: value.specialization.trim(),
+          licenseNumber: value.licenseNumber.trim(),
+          qualifications: value.qualifications.trim(),
+          experienceYears: Number(value.experienceYears),
+          contactNumber: value.phone.trim(),
+          address: value.address.trim(),
+          consultationFee: value.consultationFee.trim()
+            ? Number(value.consultationFee)
+            : undefined,
+          bio: value.bio.trim(),
+        },
+      };
+
+      apply(
+        {
+          data: doctorData,
+          resume: value.resume as File,
+          additionalFiles: value.additionalFiles
+        },
+        {
+          onSuccess: (res) => {
+            console.log(res)
+          }
+        }
+      )
+
     },
   });
 
@@ -476,20 +508,20 @@ const DoctorApplyForm = () => {
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor="additional-file-field">
-                    Resume
+                    Additional Documents
                   </FieldLabel>
                   <div>
                     <Button
                       // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
-                      render={<label htmlFor="resume-field" />}
+                      render={<label htmlFor="additional-file-field" />}
                       nativeButton={false}
                       variant="outline"
                     >
                       <FileUp size="4" />
-                      Upload resume
+                     Add Files
                     </Button>
                     <input
-                      id="resume-field"
+                      id="additional-file-field"
                       type="file"
                       className="sr-only"
                       multiple
@@ -529,6 +561,12 @@ const DoctorApplyForm = () => {
                         // e.target.value = "";
                       }}
                     />
+{/* 
+                    {files.length > 0 && (
+                      <span className="text-xs text-muted-foreground">
+                        {files.length} of {MAX_ADDITIONAL_FILES}  added
+                      </span>
+                    )} */}
 
                     {/* {file ? (
                       <div className="inline-flex">

@@ -2,12 +2,12 @@ import apiClient from "@/lib/apiClient";
 import { DoctorApplicationPayload } from "@/types/doctor.type";
 
 export function applyDoctor(payload: DoctorApplicationPayload) {
-    const formData = new FormData();
+  const formData = new FormData();
 
-    formData.append("data", JSON.stringify(payload.data));
-    formData.append("resume", payload.resume)
+  formData.append("data", JSON.stringify(payload.data));
+  formData.append("resume", payload.resume);
 
-      for (const file of payload.additionalFiles) {
+  for (const file of payload.additionalFiles) {
     formData.append("additionalFiles", file);
   }
 
