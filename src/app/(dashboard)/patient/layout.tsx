@@ -1,13 +1,13 @@
 import DashboardShell from "@/components/dashboard/dashboard-shell";
 import RoleGuard from "@/components/modules/auth/role-guard";
 
-export default function AdminLayout({
+export default function PatientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <RoleGuard roles={["ADMIN", "SUPER_ADMIN"]}>
+  return <RoleGuard roles={["PATIENT"]}>
     {/** biome-ignore lint/a11y/useValidAriaRole: <explanation> */}
-<DashboardShell role="ADMIN">{children}</DashboardShell>
+<DashboardShell role="PATIENT">{children}</DashboardShell>
   </RoleGuard>;
 }

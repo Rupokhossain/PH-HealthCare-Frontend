@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks/auth.hook";
+import { UserRole } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,10 +14,20 @@ const Header = () => {
     { name: "About us", url: "/about-us" },
   ];
 
+
+  const dashboardRoute: Record<UserRole, string> = {
+    SUPER_ADMIN:"/admin",
+    ADMIN: "/admin",
+    DOCTOR: "/doctor",
+    PATIENT: "/patient"
+  }
+
   const { data, isLoading } = useGetMe();
   const {mutate: logout} = useLogout();
   const queryClient = useQueryClient();
 
+
+  const role: UserRole = !!data?.data && data?.data.role
 
   const handleLogout = () => {
     logout(undefined, {
@@ -51,6 +62,8 @@ const Header = () => {
               {route.name}
             </Link>
           ))}
+
+          {role && <Link href={dashboardRoute[role]}>Dashboard</Link>}
         </nav>
         <div>
           {!isLoading && !data && (
