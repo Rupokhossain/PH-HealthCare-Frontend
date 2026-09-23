@@ -17,11 +17,15 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useVerifyAccount } from "@/hooks/auth.hook";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
-
+import { useVerifyDoctorAccount } from "@/hooks";
 
 const RESEND_COOLDOWN = 120;
 
-const VerifyAccountForm = () => {
+const VerifyAccountForm = ({
+  mode = "patient",
+}: {
+  mode: "doctor" | "patient";
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -29,9 +33,13 @@ const VerifyAccountForm = () => {
   const [isInvalid, setIsInvalid] = useState(false);
   const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
 
-  const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
-  const email = searchParams.get("email");
+  const { mutate: verifyPatient, isPending: verifyPending } =
+    useVerifyAccount();
+  const { mutate: verifyDoctor } = useVerifyDoctorAccount();
 
+  const verify = mode === "doctor" ? verifyDoctor : verifyPatient;
+
+  const email = searchParams.get("email");
 
   useEffect(() => {
     if (!email) {
@@ -39,20 +47,17 @@ const VerifyAccountForm = () => {
     }
   }, [email, router]);
 
-
   useEffect(() => {
-
-    if(resendTimer <= 0) {
-      return
+    if (resendTimer <= 0) {
+      return;
     }
 
     const timer = setInterval(() => {
       setResendTimer((prev) => prev - 1);
     }, 1000);
 
-    return () => clearInterval(timer)
-  })
-
+    return () => clearInterval(timer);
+  });
 
   const handleOTP = () => {
     if (!email) return;
@@ -72,18 +77,23 @@ const VerifyAccountForm = () => {
         if (!res.success) {
           toast.add({
             title: "Server Failure",
-            description: res.message || "Something went wrong. Please try again",
+            description:
+              res.message || "Something went wrong. Please try again",
             type: "error",
           });
-          return; 
+          return;
         }
 
-        toast.add({
-          title: "Verification Successful",
-          description: "Your account is verified. Welcome onboard!",
-          type: "success",
-        });
-        router.push("/");
+        if (mode === "doctor") {
+          toast.add({
+            title: "Verification Successful",
+            description: "An Admin will approve your account. This may take time. Please check your email in few days",
+            type: "success",
+          });
+          router.push("/");
+
+          return;
+        }
       },
       onError: (err) => {
         toast.add({
@@ -94,7 +104,6 @@ const VerifyAccountForm = () => {
       },
     });
   };
-
 
   if (!email) {
     return null;
@@ -152,9 +161,7 @@ const VerifyAccountForm = () => {
         </form>
       </CardContent>
       <CardFooter>
-        <Button disabled={resendTimer > 0}>
-          Resend
-        </Button>
+        <Button disabled={resendTimer > 0}>Resend</Button>
         <Button type="submit" form="otp-form" disabled={verifyPending}>
           {verifyPending ? (
             <>

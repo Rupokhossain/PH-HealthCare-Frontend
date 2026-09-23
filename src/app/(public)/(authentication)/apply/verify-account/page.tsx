@@ -1,22 +1,27 @@
-import { GalleryVerticalEnd } from "lucide-react";
+import VerifyAccountForm from "@/components/form/verify-account-form";
 import Image from "next/image";
-import LoginForm from "@/components/form/login-form";
 
-export default function LoginPage() {
+import Link from "next/link";
+import { Suspense } from "react";
+
+export default function VerifyDoctorAccountPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="/" className="flex items-center gap-2 font-medium">
-            <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEnd className="size-4" />
+          <Link href="/" className="flex items-center gap-2 font-medium">
+            <div className="flex items-center gap-2">
+              <Image src="/logo.png" alt="logo" width={40} height={40} />
+
+              <span>PH Healthcare</span>
             </div>
-            Acme Inc.
-          </a>
+          </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm/>
+            <Suspense fallback={<p>Loading...</p>}>
+              <VerifyAccountForm mode="doctor" />
+            </Suspense>
           </div>
         </div>
       </div>
@@ -24,8 +29,7 @@ export default function LoginPage() {
         <Image
           src="/login.jpg"
           alt="Image"
-          width={300}
-          height={300}
+          fill
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>

@@ -1,4 +1,5 @@
 import apiClient from "@/lib/apiClient";
+import { VerifyAccountPaylaod } from "@/types";
 import { DoctorApplicationPayload } from "@/types/doctor.type";
 
 export function applyDoctor(payload: DoctorApplicationPayload) {
@@ -15,4 +16,12 @@ export function applyDoctor(payload: DoctorApplicationPayload) {
     method: "POST",
     body: formData,
   });
+}
+
+
+export function verifyDoctorAccount(payload: VerifyAccountPaylaod) {
+  return apiClient("/doctor/apply-as-doctor/verify-email", {
+    method: "POST",
+    body: payload,
+  })
 }
