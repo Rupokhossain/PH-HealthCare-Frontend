@@ -1,5 +1,4 @@
-import DoctorApprovalTabs from '@/components/modules/auth/doctor-approval/doctor-approval-tabs'
-import React from 'react'
+import DoctorApprovalTabs from '@/components/modules/doctor-approval/doctor-approval-tabs'
 
 const page = () => {
   return (

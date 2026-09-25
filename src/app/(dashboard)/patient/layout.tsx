@@ -1,5 +1,5 @@
 import DashboardShell from "@/components/dashboard/dashboard-shell";
-import RoleGuard from "@/components/modules/auth/role-guard";
+import RoleGuard from "@/components/auth/role-guard";
 
 export default function PatientLayout({
   children,

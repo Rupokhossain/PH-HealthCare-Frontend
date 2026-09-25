@@ -1,4 +1,4 @@
-import AuthGuard from "@/components/modules/auth/auth-guard";
+import AuthGuard from "@/components/auth/auth-guard";
 
 export default function DashboardLayout({
   children,
