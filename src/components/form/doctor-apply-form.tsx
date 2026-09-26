@@ -3,6 +3,7 @@
 import { useApplyAsDoctor } from "@/hooks/doctor.hook";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner"; // shadcn sonner toast
 import {
   Field,
   FieldDescription,
@@ -17,6 +18,7 @@ import {
   FileText,
   FileUp,
   GraduationCap,
+  Loader2,
   Mail,
   MapPin,
   Phone,
@@ -89,8 +91,19 @@ const DoctorApplyForm = () => {
           additionalFiles: value.additionalFiles,
         },
         {
-          onSuccess: (res) => {
-            console.log(res);
+          onSuccess: (res: any) => {
+            toast.success(
+              res?.message || "Application submitted successfully! Please check your email for the OTP.",
+            );
+
+            // সফল হলে ইমেইল কুয়েরি প্যারামিটারসহ OTP ভেরিফিকেশন পেজে রিডাইরেক্ট হবে
+            // (আপনার প্রোজেক্টে ভেরিফিকেশন পেজের নাম /verify-email বা /verify-otp যা-ই হোক তা দিতে পারেন)
+            router.push(`/verify-email?email=${encodeURIComponent(value.email.trim())}`);
+          },
+          onError: (error: any) => {
+            toast.error(
+              error?.message || "Failed to submit application. Please try again.",
+            );
           },
         },
       );
@@ -584,120 +597,21 @@ const DoctorApplyForm = () => {
               );
             }}
           </form.Field>
-
-          {/* <form.Field name="additionalFiles">
-            {(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
-              const files = field.state.value;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor="additional-file-field">
-                    Resume
-                  </FieldLabel>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Button
-                      render={<label htmlFor="additional-file-field" />}
-                      nativeButton={false}
-                      variant="outline"
-                    >
-                      <Plus size="4" />
-                      Add Files
-                    </Button>
-                    <input
-                      id="additional-file-field"
-                      type="file"
-                      multiple
-                      className="sr-only"
-                      name={field.name}
-                      onChange={(e) => {
-                        const incoming = Array.from(e.target.files ?? []);
-
-                        if (incoming.length === 0) {
-                          return;
-                        }
-
-                        const invalid = incoming.some(
-                          (file) =>
-                            !isAcceptedFileSize(file.size) ||
-                            !isAcceptedFileType(file.type),
-                        );
-
-                        if (invalid) {
-                          field.handleBlur();
-                          e.target.value = "";
-                          return;
-                        }
-
-                        field.handleChange([...files, ...incoming]);
-                      }}
-                    />
-                    {files.length > 0 && (
-                      <span className="text-xs text-muted-foreground">
-                        {files.length} of {MAX_ADDITIONAL_FILES} added
-                      </span>
-                    )}
-                  </div>
-                  {files.length > 0 && (
-                    <ul className="flex flex-col gap-2">
-                      {files.map((file, index) => (
-                        <li
-                          key={`${file.name}-${index}`}
-                          className="flex items-center justify-between gap-2 rounded-lg bg-muted px-3 py-2 text-sm"
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <FileText className="size-4 shrink-0 text-primary" />
-                            <span className="truncate">{file.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {formatFileSize(file.size)}
-                            </span>
-                          </span>
-                          <button
-                            type="button"
-                            aria-label={`Remove ${file.name}`}
-                            onClick={() => {
-                              field.handleChange(
-                                files.filter((_, i) => i !== index),
-                              );
-                              field.handleBlur();
-                            }}
-                            className="text-muted-foreground transition-colors hover:text-destructive focus:outline-none"
-                          >
-                            <X className="size-4" />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              );
-            }}
-          </form.Field> */}
         </FieldGroup>
+
         <div className="flex justify-end w-full mt-5">
-          <Button type="submit" size="lg">
-            Submit
+          <Button type="submit" size="lg" disabled={applyPending}>
+            {applyPending ? (
+              <>
+                <Loader2 className="mr-2 size-4 animate-spin" />
+                Submitting Application...
+              </>
+            ) : (
+              "Submit Application"
+            )}
           </Button>
         </div>
       </form>
-      {/* <p className="text-xs leading-relaxed text-muted-foreground">
-        Already an approved doctor?{" "}
-        <Link
-          href="/login"
-          className="font-medium underline underline-offset-4 hover:text-primary"
-        >
-          Sign in to the Doctor Portal
-        </Link>
-        . Patient applications should use the{" "}
-        <Link
-          href="/register"
-          className="font-medium underline underline-offset-4 hover:text-primary"
-        >
-          patient registration
-        </Link>{" "}
-        form instead.
-      </p> */}
     </div>
   );
 };
