@@ -11,6 +11,7 @@ import Link from "next/link";
 const Header = () => {
   const routes = [
     { name: "Home", url: "/" },
+     { name: "Doctors", url: "/doctors" },
     { name: "About us", url: "/about-us" },
   ];
 
@@ -19,7 +20,7 @@ const Header = () => {
     SUPER_ADMIN:"/admin",
     ADMIN: "/admin",
     DOCTOR: "/doctor",
-    PATIENT: "/patient"
+    PATIENT: "/dashboard"
   }
 
   const { data, isLoading } = useGetMe();

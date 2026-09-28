@@ -3,4 +3,13 @@ export interface ApiResponse<T> {
   statusCode: number;
   message: string;
   data: T;
+  meta: Meta
+}
+
+
+export interface Meta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number
 }

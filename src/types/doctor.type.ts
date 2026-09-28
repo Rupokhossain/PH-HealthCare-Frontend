@@ -23,7 +23,6 @@ export interface DoctorApplicationPayload {
   data: DoctorApplicationData;
 }
 
-
 export type DoctorVerificationStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface Doctor {
@@ -64,4 +63,25 @@ export interface ApproveDoctorPayload {
   doctorId: string;
   verificationStatus: "APPROVED" | "REJECTED";
   rejectionReason?: string;
+}
+
+export interface PublicDoctorProfile {
+  id: string;
+  name: string;
+  specialization: string;
+  licenseNumber: string;
+  qualifications: string;
+  experienceYears: number;
+  bio?: string | null;
+  consultationFee?: number | string | null;
+  createdAt: string;
+}
+
+export interface PublicDoctorParams {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  specialization?: string;
+  sortBy?: string;
+  sortOrder?: "desc" | "asc";
 }

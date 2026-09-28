@@ -1,5 +1,5 @@
-import { applyDoctor, approveDoctor, getAllDoctors, verifyDoctorAccount } from "@/api/doctor.api";
-import { DoctorParams } from "@/types";
+import { applyDoctor, approveDoctor, getAllDoctors, getAllPublicDoctors, getTodayScheduleByDoctor, verifyDoctorAccount } from "@/api/doctor.api";
+import { DoctorParams, PublicDoctorParams } from "@/types";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 export function useApplyAsDoctor() {
@@ -41,4 +41,23 @@ export function useApproveDoctor() {
       queryClient.invalidateQueries({queryKey: ["doctors"]});
     }
   }); 
+}
+
+
+export function useGetTodayScheduleByDoctor(params: {
+  doctorId?: string;
+  page?: number;
+  limit?: number;
+}) {
+  return useQuery({
+    queryKey: ["schedule", params],
+    queryFn: () => getTodayScheduleByDoctor(params),
+  });
+}
+
+export function useSuspenseGetPublicDoctors(params: PublicDoctorParams) {
+  return useSuspenseQuery({
+    queryKey: ["doctors", "public", params],
+    queryFn: () => getAllPublicDoctors(params),
+  });
 }

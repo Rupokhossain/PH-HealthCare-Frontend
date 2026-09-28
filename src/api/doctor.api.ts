@@ -1,6 +1,7 @@
 import apiClient from "@/lib/apiClient";
 import { ApiResponse, VerifyAccountPaylaod } from "@/types";
-import { ApproveDoctorPayload, Doctor, DoctorApplicationPayload, DoctorParams } from "@/types/doctor.type";
+import { ApproveDoctorPayload, Doctor, DoctorApplicationPayload, DoctorParams, PublicDoctorParams, PublicDoctorProfile } from "@/types/doctor.type";
+import { Schedule } from "@/types/schedule.type";
 
 export function applyDoctor(payload: DoctorApplicationPayload) {
   const formData = new FormData();
@@ -40,4 +41,31 @@ export function approveDoctor(payload: ApproveDoctorPayload) {
     method: "POST",
     body: payload
   })
+}
+
+
+export function getTodayScheduleByDoctor(params: {
+  doctorId?: string;
+  page?: number;
+  limit?: number;
+}) {
+  return apiClient<ApiResponse<Schedule[]>>("/schedule/todays-schedule", {
+    params,
+  });
+}
+
+
+export function getAllPublicDoctors(params: PublicDoctorParams) {
+  return apiClient<ApiResponse<PublicDoctorProfile[]>>(
+    "/doctor/public/all-doctors",
+    {
+      params,
+    },
+  );
+}
+
+export function getPublicDoctorProfile(doctorId: string) {
+  return apiClient<ApiResponse<PublicDoctorProfile>>(
+    `/doctor/public/${doctorId}`,
+  );
 }
