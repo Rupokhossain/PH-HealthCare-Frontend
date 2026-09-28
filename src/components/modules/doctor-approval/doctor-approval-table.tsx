@@ -7,61 +7,71 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import TablePagination from "@/components/ui/table-pagintaion";
 import { useGetAllDoctors, useSuspenseGetAllDoctors } from "@/hooks";
 import { DoctorParams, DoctorVerificationStatus } from "@/types";
 import { Dispatch, SetStateAction } from "react";
 
-
-interface Props extends DoctorParams{
-    handleReview: Dispatch<SetStateAction<string>>;
+interface Props extends DoctorParams {
+  handleReview: Dispatch<SetStateAction<string>>;
+  handlePageChange: Dispatch<SetStateAction<number>>;
 }
 
-const DoctorApprovalTable = ({handleReview, 
-    ...params
-} : Props) => {
+const DoctorApprovalTable = ({ handleReview, handlePageChange, ...params }: Props) => {
+  const { data, isPending } = useSuspenseGetAllDoctors(params);
 
-const {data, isPending} = useSuspenseGetAllDoctors(params);
+  const doctors = data?.data || [];
 
-    const doctors = data?.data || [];
-
-    if(isPending) {
-        return <p>Loading...</p>
-    }
+  if (isPending) {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <div className="border rounded-lg">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>License No.</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Contact No.</TableHead>
-            <TableHead>Specialization</TableHead>
-            <TableHead className="text-right">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {doctors.map((doctor) => (
-            <TableRow key={doctor.id}>
-              <TableCell>{doctor.name}</TableCell>
-              <TableCell>{doctor.licenseNumber}</TableCell>
-              <TableCell>{doctor.email}</TableCell>
-              <TableCell>
-                {doctor.contactNumber ? doctor.contactNumber : "-"}
-              </TableCell>
-              <TableCell>{doctor.specialization}</TableCell>
-              <TableCell className="text-right">
-                    <Button variant="outline"
-                    onClick={() => handleReview(doctor.id)}
-                    >Review</Button>
-              </TableCell>
+    <>
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>License No.</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Contact No.</TableHead>
+              <TableHead>Specialization</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  )
-}
+          </TableHeader>
+          <TableBody>
+            {doctors.map((doctor) => (
+              <TableRow key={doctor.id}>
+                <TableCell>{doctor.name}</TableCell>
+                <TableCell>{doctor.licenseNumber}</TableCell>
+                <TableCell>{doctor.email}</TableCell>
+                <TableCell>
+                  {doctor.contactNumber ? doctor.contactNumber : "-"}
+                </TableCell>
+                <TableCell>{doctor.specialization}</TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleReview(doctor.id)}
+                  >
+                    Review
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="my-5">
+        <TablePagination 
+          page={params.page ?? 0}
+          totalPages={data?.meta?.totalPages ?? 0}
+          handlePageChange={handlePageChange}
+         />
+      </div>
+    </>
+  );
+};
 
-export default DoctorApprovalTable
+export default DoctorApprovalTable;

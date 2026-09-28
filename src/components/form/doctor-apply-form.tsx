@@ -98,7 +98,7 @@ const DoctorApplyForm = () => {
 
             // সফল হলে ইমেইল কুয়েরি প্যারামিটারসহ OTP ভেরিফিকেশন পেজে রিডাইরেক্ট হবে
             // (আপনার প্রোজেক্টে ভেরিফিকেশন পেজের নাম /verify-email বা /verify-otp যা-ই হোক তা দিতে পারেন)
-            router.push(`/verify-email?email=${encodeURIComponent(value.email.trim())}`);
+            router.push(`/apply/verify-account?email=${encodeURIComponent(value.email.trim())}`);
           },
           onError: (error: any) => {
             toast.error(
